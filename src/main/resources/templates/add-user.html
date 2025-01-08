@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bootstrap demo</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<!-- jQuery -->
+
+</head>
+<body>
+	<div th:insert="~{adminnavbar}"></div>
+	<!--     <h1 class="text-center">Add User</h1> -->
+
+	<div class="container d-inline p-3">
+
+		<div class="row m-0 p-0">
+			<div class="col-md-3 m-0 p-1">
+			<div class="card">
+				<h1 class="card-title text-center bg-info">Add User</h1>
+				<div class="card-body">
+					<form th:action="@{/admin/users}" method="post" id="addUserForm" th:object="${userDto}" autocomplete="off">
+						
+						<div class="alert alert-warning alert-dismissible fade text-danger mb-2"
+							th:if="${userExist==true}"
+							th:classappend="${userExist==true} ? 'show':''" role="alert">
+							<strong>Username : [[${existUsername}]] !</strong> is already in
+							use. Please try different username !!!
+							<button type="button" class="btn-close" data-bs-dismiss="alert"
+								aria-label="Close"></button>
+						</div>
+						<div class="col-md-12 position-relative mb-2" style="display: none;" id="userFormId">
+							<label for="username" class="form-label">Id</label> <input
+								type="text" class="form-control" name="id" readonly
+								id="userid">
+						</div>
+						<div class="col-md-12 position-relative mb-2">
+							<label for="username" class="form-label">User Name</label> <input
+								type="text" class="form-control" name="username" 
+								th:field="*{username}"
+								th:classappend="${#fields.hasErrors('username')} == true ? 'is-invalid':'is-valid'"
+								id="username">
+							<div th:if="${#fields.hasErrors('username')}"
+								th:errors="*{username}" class=""
+								th:classappend="${#fields.hasErrors('username')} == true ? 'invalid-tooltip':'valid-tooltip' "></div>
+
+						</div>
+						<div class="col-md-12 position-relative mb-2">
+							<label for="password" class="form-label">Password</label> 
+							<div class=" input-group">
+							<input
+								type="password" class="form-control" name="password" 
+								th:field="*{password}"
+								th:classappend="${#fields.hasErrors('password')} == true ? 'is-invalid':'is-valid'"
+								id="password">
+								<button class="btn btn-outline-secondary" type="button"
+									id="togglePassword">
+									<i class="bi bi-eye-slash"></i>
+								</button>
+								</div>
+								<div th:if="${#fields.hasErrors('password')}"
+								th:errors="*{password}" class=""
+								th:classappend="${#fields.hasErrors('password')} == true ? 'invalid-tooltip':'valid-tooltip' ">
+							</div>
+						</div>
+						<div class="col-md-12 mb-2 position-relative mb-2">
+							<label class="form-label">Add Roles To User</label>
+							<div class="row d-flex justify-content-between">
+								<div class="col-sm-5 pr-0 mr-0">
+									<select id="sourceRoleSelect" class="form-select"
+										aria-label="Multiple select example" multiple>
+										<option th:each="role : ${roles}" 
+											   th:value="${role}" th:text="${role}"></option>
+									</select>
+								</div>
+								<div class="d-grid gap-2 col-sm-2 px-1">
+									<input id="addRoleBtn" type="button"
+										class="rounded text-success" value=">>"> <input
+										id="removeRoleBtn" type="button" class="rounded text-danger"
+										value="<<">
+								</div>
+								<div class="col-sm-5 pl-0 ml-0">
+									<select id="targetRoleSelect" name="roles" 
+										class="form-select" aria-label="Multiple select example"
+										multiple
+										th:classappend="${#fields.hasErrors('roles')} == true ? 'is-invalid':'is-valid'">
+									</select> <span th:if="${#fields.hasErrors('roles')}"
+										th:errors="*{roles}" class=""
+										th:classappend="${#fields.hasErrors('roles')} == true ? 'invalid-tooltip':'valid-tooltip' "></span>
+								</div>
+
+							</div>
+
+						</div>
+
+
+						<div class="form-check form-switch mb-2">
+							<input class="form-check-input" type="checkbox" name="enabled" id="enabled" 
+								checked="checked" role="switch">
+							<label class="form-check-label" for="flexSwitchCheckDefault">Enabled</label>
+
+						</div>
+
+						<div class="form-check form-switch mb-2">
+							<input class="form-check-input" type="checkbox"  id="accountNonExpired" 
+								name="accountNonExpired" checked="checked" role="switch"> <label
+								class="form-check-label" for="flexSwitchCheckDefault">AccountNonExpired</label>
+						</div>
+
+						<div class="form-check form-switch mb-2">
+							<input class="form-check-input" type="checkbox" id="accountNonLocked" 
+								name="accountNonLocked" checked="checked" role="switch"> <label
+								class="form-check-label" for="flexSwitchCheckDefault">AccountNonLocked</label>
+						</div>
+
+						<div class="form-check form-switch mb-2">
+							<input class="form-check-input" type="checkbox" id="credentialsNonExpired" 
+								name="credentialsNonExpired" checked="checked" role="switch"> <label
+								class="form-check-label" for="flexSwitchCheckDefault">CredentialsNonExpired</label>
+						</div>
+
+						<div class="d-flex justify-content-end gap-2">
+							<a class="btn btn-primary" id="newUserBtn" th:href="@{/admin/users}">New User</a>
+							<button class="btn btn-primary" type="submit">
+								<i class="bi bi-floppy"></i>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			</div>
+			<div class="col-md-9 m-0 p-1">
+			<div class="card">
+				<h1 class="card-title text-center bg-info">User List</h1>
+				<div class="card-body">
+					<div class="overflow-scroll" style="height: 500px;">
+						<table class="table table-hover table-stripped">
+							<thead class="position-sticky top-0 table-light">
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">Actions</th>
+									<th scope="col">username</th>
+									<th scope="col">password</th>
+									<th scope="col">roles</th>
+									<th scope="col">enabled</th>
+									<th scope="col">Non</br>Expired</th>
+									<th scope="col">Non</br>Locked</th>
+									<th scope="col">crNon</br>Expired</th>
+								</tr>
+							</thead>
+							<tbody class="">
+								<tr th:each="user, i : ${dbUsers}">
+									<th th:text="${i.count}"></th>
+									<td>
+										<a id="userFormEditBtn" class="btn btn-primary"
+											th:href="@{'/admin/get/user/'+${user.id} }"> <i
+												class="bi bi-vector-pen"></i></a>
+										
+										<a id="userDeleteBtn"
+											class="btn btn-danger"
+											th:href="@{'/admin/delete/user/'+${user.id}}"
+											data-bs-toggle="modal" data-bs-target="#userDeleteModal">
+												<i class="bi bi-trash"></i>
+										</a>
+									</td>
+									
+									<td th:text="${user.username}"></td>
+									<td>
+										<div class="input-group">
+						                    <input type="password" id="passwordField" class="form-control" th:value="${user.openpassword}">
+						                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+						                        <i class="bi bi-eye-slash"></i>
+						                    </button>
+						                </div>
+                
+									</td>
+									<td>
+										<input type="text" class="form-control" th:value="${user.roles}" readonly/>
+									</td>
+									<td><i class="bi bi-check-square text-success"
+										th:if=${user.enabled==true}></i> <i
+										class="bi bi-x-square text-danger"
+										th:if=${user.enabled==false}></i>
+									</td>
+									<td><i class="bi bi-check-square text-success"
+										th:if=${user.accountNonExpired==true}></i> <i
+										class="bi bi-x-square text-danger"
+										th:if=${user.accountNonExpired==false}></i>
+									</td>
+									<td><i class="bi bi-check-square text-success"
+										th:if=${user.accountNonLocked==true}></i> <i
+										class="bi bi-x-square text-danger"
+										th:if=${user.accountNonLocked==false}></i>
+									</td>
+									<td><i class="bi bi-check-square text-success"
+										th:if=${user.credentialsNonExpired==true}></i> <i
+										class="bi bi-x-square text-danger"
+										th:if=${user.credentialsNonExpired==false}></i>
+									</td>									
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit Modal -->
+
+	<!--Edit Modal -->
+	<div class="modal fade" id="userEditModal" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/admin/update/user}" method="post"
+					th:object="${modalUserDto}" class="needs-validation" novalidate>
+
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Edit User</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+
+						<div class="col-md-12 position-relative mb-2">
+							<label for="id" class="form-label">Id</label> <input type="text" readonly
+								class="form-control form-control-sm" name="id" id="userId"
+								required> <span class="invalid-tooltip"></span> <span
+								class="valid-tooltip"></span>
+						</div>
+						<div class="col-md-12 position-relative mb-2">
+							<label for="username" class="form-label">User Name</label> <input
+								type="text" class="form-control form-control-sm" name="username"
+								id="userName" required> <span class="invalid-tooltip"></span>
+							<span class="valid-tooltip"></span>
+						</div>
+						<div class="col-md-12 position-relative mb-2">
+							<label for="password" class="form-label">Password</label> <input
+								type="text" class="form-control form-control-sm" name="password"
+								id="userPwd" required> <span class="invalid-tooltip"></span>
+							<span class="valid-tooltip"></span>
+						</div>
+						
+						
+						<div class="col-md-12 mb-2 position-relative">
+							<label class="form-label">Add Roles To User</label>
+							<div class="row d-flex justify-content-between">
+								<div class="col-sm-5 pr-0 mr-0">
+									<select id="sourceRoleSelect" class="form-select"
+										aria-label="Multiple select example" multiple>
+
+									</select>
+								</div>
+
+								<div class="d-grid gap-1 col-sm-2 px-1">
+									<input id="addRoleBtn" type="button"
+										class="rounded text-success" value=">>"> <input
+										id="removeRoleBtn" type="button" class="rounded text-danger"
+										value="<<">
+								</div>
+
+								<div class="col-sm-5 pl-0 ml-0">
+									<select id="targetRoleSelect" name="roles" class="form-select"
+										aria-label="Multiple select example" multiple required>
+									</select> <span class="valid-tooltip"></span> <span
+										class="valid-tooltip"></span>
+								</div>
+
+							</div>
+
+						</div>
+
+
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox" name="enabled"
+								checked="checked" role="switch" id="enabled"> <label
+								class="form-check-label" for="flexSwitchCheckDefault">Enabled</label>
+
+						</div>
+
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox"
+								name="accountNonExpired" checked="checked" role="switch"
+								id="accountNonExpired"> <label class="form-check-label"
+								for="flexSwitchCheckDefault">AccountNonExpired</label>
+						</div>
+
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox"
+								name="accountNonLocked" checked="checked" role="switch"
+								id="accountNonLocked"> <label class="form-check-label"
+								for="flexSwitchCheckDefault">AccountNonLocked</label>
+						</div>
+
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox"
+								name="credentialsNonExpired" checked="checked" role="switch"
+								id="credentialsNonExpired"> <label
+								class="form-check-label" for="flexSwitchCheckDefault">CredentialsNonExpired</label>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+						</button>
+						<button id="modalSubmitBtn" type="submit" class="btn btn-primary">
+							<i class="bi bi-floppy"></i>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- /Edit Modal -->
+
+	<!-- Delete Modal -->
+
+	<div class="modal fade" id="userDeleteModal" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-danger">
+					<h1 class="modal-title fs-5 text-white" id="exampleModalLabel">Kayıt
+						Silinecek.</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-danger">
+					<h1>Silmek istediğine eminmisin ?</h1>
+				</div>
+				<div class="modal-footer">
+					<a type="button" class="btn btn-info" data-bs-dismiss="modal"><i
+						class="bi bi-x-lg"></i></a> <a id="deleteConfirmBtn" href=""
+						type="button" class="btn btn-danger text-white"><i class="bi bi-trash-fill"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- /Delete Modal -->
+
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="text/javascript" th:src="@{/customjs/jquery371.min.js}"></script>
+	<script type="text/javascript" th:src="@{/customjs/adduser.js}"></script>
+
+</body>
+</html>
