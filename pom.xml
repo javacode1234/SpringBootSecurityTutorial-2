@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.securitydemo</groupId>
-	<artifactId>SpringBootSecurityTutorial_1</artifactId>
+	<artifactId>SpringBootSecurityTutorial_2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SpringBootSecurityTutorial-1</name>
+	<name>SpringBootSecurityTutorial-2</name>
 	<description>SpringBootSecurity</description>
 	<url />
 	<licenses>
