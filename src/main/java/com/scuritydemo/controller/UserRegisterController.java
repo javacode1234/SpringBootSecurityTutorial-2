@@ -1,4 +1,4 @@
-package com.scuritydemo.controllers;
+package com.scuritydemo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

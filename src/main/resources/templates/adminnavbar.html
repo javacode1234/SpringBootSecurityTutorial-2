@@ -1,6 +1,12 @@
 <nav th:fragment="adminnavbar" class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-	<a class="navbar-brand" sec:authentication="name"  th:href="@{/admin/home}">Admin Dashboard</a>
+		<div class="" style="margin-right:5px;">
+			<img th:src="${currentUser.image==null} ? 'images/icons8-account-80.png' : 'data:image/*;base64,' + ${currentUser.image} " 
+				class="rounded float-end" alt="..." width="40" height="40"
+				id="userImage" accept="image/*" />
+		</div>
+<!-- 		<a class="navbar-brand" sec:authentication="name"  th:href="@{/admin/home}">Admin Dashboard</a> -->
+		<a class="navbar-brand" th:text="${currentUser.firstname}+' '+${currentUser.lastname}" th:href="@{/admin/home}">Admin Dashboard</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>

@@ -23,7 +23,8 @@
 			<div class="card">
 				<h1 class="card-title text-center bg-info">Add User</h1>
 				<div class="card-body">
-					<form th:action="@{/admin/users}" method="post" id="addUserForm" th:object="${userDto}" autocomplete="off">
+					<form th:action="@{/admin/users}" method="post" id="addUserForm" th:object="${userDto}"
+									enctype="multipart/form-data">
 						
 						<div class="alert alert-warning alert-dismissible fade text-danger mb-2"
 							th:if="${userExist==true}"
@@ -38,9 +39,42 @@
 								type="text" class="form-control" name="id" readonly
 								id="userid">
 						</div>
+						<div class="row mb-2">
+							<div class="mb-2">
+								<img th:src="@{/images/icons8-account-80.png}" class="rounded float-end" alt="..." 
+										width="80" height="80" id="userImage" accept="image/*">							
+							</div>
+							<div class="mb-2">
+							  <label for="formUserImage" class="form-label">User Image</label>
+							  <input class="form-control form-control-sm" id="formUserImage" type="file" name="stringResim">
+							</div>
+							
+						</div>
+						<div class="col-md-12 position-relative mb-2">
+							<label for="firstname" class="form-label">First Name</label> <input
+								type="text" class="form-control" name="firstname" autocomplete="chrome-off"
+								th:field="*{firstname}"
+								th:classappend="${#fields.hasErrors('firstname')} == true ? 'is-invalid':'is-valid'"
+								id="firstname">
+							<div th:if="${#fields.hasErrors('firstname')}"
+								th:errors="*{firstname}" class=""
+								th:classappend="${#fields.hasErrors('firstname')} == true ? 'invalid-tooltip':'valid-tooltip' "></div>
+
+						</div>
+						<div class="col-md-12 position-relative mb-2">
+							<label for="lastname" class="form-label">Last Name</label> <input
+								type="text" class="form-control" name="lastname" autocomplete="chrome-off"
+								th:field="*{lastname}"
+								th:classappend="${#fields.hasErrors('lastname')} == true ? 'is-invalid':'is-valid'"
+								id="lastname">
+							<div th:if="${#fields.hasErrors('lastname')}"
+								th:errors="*{lastname}" class=""
+								th:classappend="${#fields.hasErrors('lastname')} == true ? 'invalid-tooltip':'valid-tooltip' "></div>
+
+						</div>
 						<div class="col-md-12 position-relative mb-2">
 							<label for="username" class="form-label">User Name</label> <input
-								type="text" class="form-control" name="username" 
+								type="text" class="form-control" name="username" autocomplete="chrome-off"
 								th:field="*{username}"
 								th:classappend="${#fields.hasErrors('username')} == true ? 'is-invalid':'is-valid'"
 								id="username">
@@ -138,7 +172,7 @@
 				<h1 class="card-title text-center bg-info">User List</h1>
 				<div class="card-body">
 					<div class="overflow-scroll" style="height: 500px;">
-						<table class="table table-hover table-stripped">
+						<table id=userTable class="table table-hover table-stripped">
 							<thead class="position-sticky top-0 table-light">
 								<tr>
 									<th scope="col">#</th>

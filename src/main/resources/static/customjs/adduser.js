@@ -73,6 +73,11 @@ $(document).ready(function() {
 
 		$.get(href, function(user, status) {
 			$("#addUserForm #userid").val(user.id);
+			
+			$("#addUserForm #userImage").attr("src", "data:image/*;base64," + user.image);
+			$("#addUserForm #firstname").val(user.firstname);
+			$("#addUserForm #lastname").val(user.lastname);			
+			
 			$("#addUserForm #username").val(user.username);
 			$("#addUserForm #password").val(user.openpassword);
 
@@ -123,12 +128,43 @@ $(document).ready(function() {
 	//  /see pwd  on form//
 	
 	// newUserBtn Click clear form //
-	$("#newUserBtn").click(function(e){
-		e.preventDefault();
-		$("#username").value("");
-		$("#password").value("");
-		
-	})
+//	$("#addUserForm #newUserBtn").click(function(e){
+//		e.preventDefault();
+//		$("#addUserForm #firstname").value("");
+//		$("#addUserForm #lastname").value("");
+//		$("#addUserForm #username").value("");
+//		$("#addUserForm #password").value("");
+//		
+//	})
 	// /newUserBtn Click clear form //
+	
+	/* delete modal */
+	$("table#userTable #userDeleteBtn").on("click", function(e){
+		e.preventDefault();
+		var href = $(this).attr("href");
+		$("#userDeleteModal #deleteConfirmBtn").attr("href", href);
+		
+	});
+	/* /delete modal */
+	
+	// add user image to form //
+	$("form#addUserForm #formUserImage").on('change', function() {
+		readURLAddUserImage(this);
+	});
+	// /add user image to form //
 
 });
+
+
+
+/* add user image to form */
+function readURLAddUserImage(input) {
+	if (input.files && input.files[0]) {
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			$("form#addUserForm #userImage").attr('src', e.target.result);
+		}
+		reader.readAsDataURL(input.files[0]);
+	}
+}
+/* /add user image to form */

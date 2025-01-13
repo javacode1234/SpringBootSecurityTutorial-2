@@ -1,5 +1,7 @@
 package com.scuritydemo.dto;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,18 +17,26 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
-
 public class UserDto {
 	
 	private Integer id;
+	
+	@Lob
+	@Column(name = "stringResim", columnDefinition = "LONGTEXT")
+	private String image;
+	
+	@NotEmpty(message = "Bu alan boş olamaz !!")
+	private String firstname;
+	
+	@NotEmpty(message = "Bu alan boş olamaz !!")
+	private String lastname;
 
-	@NotEmpty(message = "Kullanıcı Adı boş olamaz !!")	
+	@NotEmpty(message = "Bu alan boş olamaz !!")	
 	private String username;
 	
 	@NotEmpty(message = "Şifre boş olamaz !!")
 	private String password;
 	
-	//@NotEmpty(message = "Şifre boş olamaz !!")
 	@NotNull(message = "En az bir Role seçmelisin !!")
 	private String roles;
 	

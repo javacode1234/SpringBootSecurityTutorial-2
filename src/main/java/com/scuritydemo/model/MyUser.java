@@ -1,9 +1,11 @@
 package com.scuritydemo.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,13 @@ public class MyUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	
+	@Lob
+	@Column(name = "stringResim", columnDefinition = "LONGTEXT")
+	private String image;
+	
+	private String firstname;
+	private String lastname;
 	
 	@NotEmpty(message = "Kullanıcı Adı boş olamaz !!")
 	private String username;

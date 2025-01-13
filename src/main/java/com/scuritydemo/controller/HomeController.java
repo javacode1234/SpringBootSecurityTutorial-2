@@ -1,8 +1,4 @@
-package com.scuritydemo.controllers;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+package com.scuritydemo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,8 +54,8 @@ public class HomeController {
 			userService.saveMyUser(defaultUser);
 			
 			model.addAttribute("userDto", new UserDto());
+			//return "login-page";
 			return "login-page";
-		
 	}
 	
 	@PostMapping("/login")

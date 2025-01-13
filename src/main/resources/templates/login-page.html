@@ -18,13 +18,13 @@
 			    <form th:action="@{/login}" method="post" th:object="${userDto}">
 			    	<div class="col-md-12 position-relative mb-2">
 					  <label class="form-label" for="username">Username</label>
-					  <input type="text" class="form-control" name="username" th:field="*{username}"
+					  <input type="text" class="form-control" name="username" th:field="*{username}" id="username"
 					  			aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
 					  <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" th:errorclass="error"></div>
 					</div>
 					<div class="col-md-12 position-relative mb-3">
 					  <label class="form-label" for="password">Password</label>
-					  <input type="text" class="form-control" name="password"  th:field="*{password}"
+					  <input type="text" class="form-control" name="password"  th:field="*{password}" id="password"
 					  			aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
 					  <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:errorclass="error"></div>
 					</div>

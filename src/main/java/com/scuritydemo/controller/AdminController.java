@@ -1,7 +1,10 @@
-package com.scuritydemo.controllers;
+package com.scuritydemo.controller;
 
+import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.scuritydemo.dto.UserDto;
@@ -37,12 +42,16 @@ public class AdminController {
 
 	
 	@GetMapping("/home")
-	public String getAdminHomePage() {
+	public String getAdminHomePage(Model model, Principal principal) {
+		MyUser myUser = myUserService.getMyUserByUsername(principal.getName());
+		model.addAttribute("currentUser", myUser);
 		return "adminhomepage";
 	}
 	
 	@GetMapping("/users")
-	public String getAddUserForm( Model model) {
+	public String getAddUserForm( Model model, Principal principal) {
+		MyUser myUser = myUserService.getMyUserByUsername(principal.getName());
+		model.addAttribute("currentUser", myUser);
 		model.addAttribute("userDto", new UserDto());
 		//model.addAttribute("modalUserDto", new UserDto()); modal kayıt iptal.
 		List<MyUser> dbUsers = myUserService.findAllUsers();
@@ -53,8 +62,11 @@ public class AdminController {
 	}
 	
 	@PostMapping("/users")
-	public String saveUserDto(@Valid @ModelAttribute("userDto") UserDto userDto, BindingResult result, Model model,
-								RedirectAttributes redirectAttr) {		
+	public String saveUserDto(@Valid @ModelAttribute("userDto") UserDto userDto, 
+								BindingResult result, Model model,
+								RedirectAttributes redirectAttr,
+								@RequestParam("stringResim") MultipartFile file
+							) throws IOException {		
 		
 		boolean userExist = myUserService.userExistForNewUser(userDto.getUsername());
 		
@@ -83,28 +95,51 @@ public class AdminController {
 			return "add-user";
 		}
 		
-		MyUser user = MyUser.builder()
-				.username(userDto.getUsername())
-				.password(pwdEncoder.encode(userDto.getPassword()))
-				.openpassword(userDto.getPassword())
-				.roles(userDto.getRoles())
-				.accountNonExpired(userDto.isAccountNonExpired())
-				.accountNonLocked(userDto.isAccountNonLocked())
-				.credentialsNonExpired(userDto.isCredentialsNonExpired())
-				.enabled(userDto.isEnabled())
-				.build();
+		if(file.getBytes()!=null && !file.getOriginalFilename().isEmpty()) {
+			MyUser user = MyUser.builder()
+					.id(userDto.getId())
+					.image(Base64.getEncoder().encodeToString(file.getBytes()))
+					.firstname(userDto.getFirstname())
+					.lastname(userDto.getLastname())
+					.username(userDto.getUsername())
+					.password(pwdEncoder.encode(userDto.getPassword()))
+					.openpassword(userDto.getPassword())
+					.roles(userDto.getRoles())
+					.accountNonExpired(userDto.isAccountNonExpired())
+					.accountNonLocked(userDto.isAccountNonLocked())
+					.credentialsNonExpired(userDto.isCredentialsNonExpired())
+					.enabled(userDto.isEnabled())
+					.build();
+			
+			myUserService.saveMyUser(user);
+		}else {
 		
-		myUserService.saveMyUser(user);
-		
+			MyUser user = MyUser.builder()
+					.username(userDto.getUsername())
+					.password(pwdEncoder.encode(userDto.getPassword()))
+					.openpassword(userDto.getPassword())
+					.roles(userDto.getRoles())
+					.accountNonExpired(userDto.isAccountNonExpired())
+					.accountNonLocked(userDto.isAccountNonLocked())
+					.credentialsNonExpired(userDto.isCredentialsNonExpired())
+					.enabled(userDto.isEnabled())
+					.build();
+			
+			myUserService.saveMyUser(user);
+		}
 		return "redirect:/admin/users";
 	}
 	
 	@PostMapping("/update/user")
-	public String updateUserDtoForModal(@Valid @ModelAttribute("userDto") UserDto userDto, BindingResult result, Model model,
-												RedirectAttributes redirectAttr) {
+	public String updateUserDtoForModal(@Valid @ModelAttribute("userDto") UserDto userDto, 
+											BindingResult result, Model model,
+											RedirectAttributes redirectAttr, 
+											@RequestParam("stringResim") MultipartFile file
+										) throws IOException {
 		
 		
 		boolean userExist = myUserService.userExistForUpdate(userDto.getUsername(), userDto.getId() );
+		MyUser updateUser = myUserService.getMyUserById(userDto.getId()).get();
 		
 		if(userExist) {
 			model.addAttribute("userDto", userDto);
@@ -128,26 +163,48 @@ public class AdminController {
 			return "add-user";
 		}
 		
-		MyUser user = MyUser.builder()
-				.id(userDto.getId())
-				.username(userDto.getUsername())
-				.password(pwdEncoder.encode(userDto.getPassword()))
-				.openpassword(userDto.getPassword())
-				.roles(userDto.getRoles())
-				.accountNonExpired(userDto.isAccountNonExpired())
-				.accountNonLocked(userDto.isAccountNonLocked())
-				.credentialsNonExpired(userDto.isCredentialsNonExpired())
-				.enabled(userDto.isEnabled())
-				.build();
-		
-		myUserService.saveMyUser(user);
+		if(file.getBytes()!=null && !file.getOriginalFilename().isEmpty()) {
+			MyUser user = MyUser.builder()
+					.id(userDto.getId())
+					.image(Base64.getEncoder().encodeToString(file.getBytes()))
+					.firstname(userDto.getFirstname())
+					.lastname(userDto.getLastname())
+					.username(userDto.getUsername())
+					.password(pwdEncoder.encode(userDto.getPassword()))
+					.openpassword(userDto.getPassword())
+					.roles(userDto.getRoles())
+					.accountNonExpired(userDto.isAccountNonExpired())
+					.accountNonLocked(userDto.isAccountNonLocked())
+					.credentialsNonExpired(userDto.isCredentialsNonExpired())
+					.enabled(userDto.isEnabled())
+					.build();
+			
+			myUserService.saveMyUser(user);
+		}else {
+			MyUser user = MyUser.builder()
+					.id(userDto.getId())
+					.firstname(userDto.getFirstname())
+					.lastname(userDto.getLastname())
+					.image(updateUser.getImage())
+					.username(userDto.getUsername())
+					.password(pwdEncoder.encode(userDto.getPassword()))
+					.openpassword(userDto.getPassword())
+					.roles(userDto.getRoles())
+					.accountNonExpired(userDto.isAccountNonExpired())
+					.accountNonLocked(userDto.isAccountNonLocked())
+					.credentialsNonExpired(userDto.isCredentialsNonExpired())
+					.enabled(userDto.isEnabled())
+					.build();
+			
+			myUserService.saveMyUser(user);
+		}
 		
 		return "redirect:/admin/users";
 	}
 	
 	@GetMapping("/get/user/{id}")
 	@ResponseBody
-	public MyUser getMethodName(@PathVariable Integer id) {
+	public MyUser getMyUserById(@PathVariable Integer id) {
 		return myUserService.getMyUserById(id).get();
 	}
 	

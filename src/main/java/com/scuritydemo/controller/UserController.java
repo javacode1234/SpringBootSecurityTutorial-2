@@ -1,17 +1,17 @@
-package com.scuritydemo.controllers;
+package com.scuritydemo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/customer")
-public class CustomerController {
+@RequestMapping("/user")
+public class UserController {
 
 		
 	@GetMapping("/home")
 	public String getUserHomePage() {
-		return "customerhomepage";
+		return "userhomepage";
 	}
 	
 	
